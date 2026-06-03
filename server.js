@@ -6,7 +6,7 @@ const path = require('path');
 const app = express();
 
 // 1. PLAK HIER JOUW HTTP API TOKEN VAN BOTFATHER (tussen de quotes):
-const bot = new Telegraf(AAETz6RvUKZS2pm4JQd7DJqgc2Ht2hFhNlE);
+const bot = new Telegraf('AAETz6RvUKZS2pm4JQd7DJqgc2Ht2hFhNlE');
 
 // 2. PLAK HIER JOUW USER ID VAN USERINFOBOT (zonder quotes, puur het getal):
 const MIJN_TELEGRAM_ID = 123456789; 
