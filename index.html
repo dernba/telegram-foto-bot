@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foto Bot</title>
+    <style>
+        body { font-family: Arial; text-align: center; padding: 20px; background: #f0f2f5; }
+        video { border: 2px solid #333; border-radius: 8px; width: 100%; max-width: 400px; }
+        button { background: #0088cc; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 5px; cursor: pointer; margin-top: 15px; width: 100%; max-width: 400px; }
+    </style>
+</head>
+<body>
+    <h2>Maak een foto voor de Telegram Bot</h2>
+    <p>Geef toestemming tot je camera om de foto te versturen.</p>
+    <video id="video" autoplay playsinline></video>
+    <br>
+    <button id="snap">Maak & Verstuur Foto</button>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const snap = document.getElementById('snap');
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => { alert("Camera niet gevonden of toegang geweigerd."); });
+
+        snap.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, 640, 480);
+            const imageData = canvas.toDataURL('image/jpeg');
+            
+            snap.innerText = "Verzenden...";
+            snap.disabled = true;
+
+            fetch('/upload-photo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: imageData })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert("Foto succesvol naar de bot gestuurd!");
+                snap.innerText = "Maak & Verstuur Foto";
+                snap.disabled = false;
+            })
+            .catch(err => {
+                alert("Er ging iets mis met verzenden.");
+                snap.innerText = "Maak & Verstuur Foto";
+                snap.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
